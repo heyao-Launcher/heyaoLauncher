@@ -1,0 +1,79 @@
+<local:MyPageRight
+    x:Class="PCL.PageToolsSelfLink"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:PCL"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    PanScroll="{Binding ElementName=PanBack}">
+    <local:MyScrollViewer x:Name="PanBack" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <StackPanel x:Name="PanMain" Margin="25,10" Grid.IsSharedSizeScope="True">
+
+            <local:MyCard Margin="0,15" Title="{DynamicResource Tools.SelfLink.Title}">
+                <Grid Margin="21,40,21,18">
+                    <Grid.Resources>
+                        <Style BasedOn="{StaticResource BasedOnTextBlock}" TargetType="{x:Type TextBlock}">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                            <Setter Property="Margin" Value="0,0,20,0" />
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Margin="0,0,0,14" TextWrapping="Wrap"
+                               Text="{DynamicResource Tools.SelfLink.Description}" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource Tools.SelfLink.RoomCode}" />
+                    <local:MyTextBox x:Name="TextRoomCode" Grid.Row="1" Grid.Column="1" Margin="0,0,12,0" />
+                    <local:MyButton Grid.Row="1" Grid.Column="2" MinWidth="96" Text="{DynamicResource Tools.SelfLink.RandomCode}"
+                                    Click="BtnRandomCode_Click" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,12,20,0" Text="{DynamicResource Tools.SelfLink.GamePort}" />
+                    <local:MyTextBox x:Name="TextGamePort" Grid.Row="2" Grid.Column="1" Margin="0,12,12,0" Text="25565" />
+                    <TextBlock Grid.Row="2" Grid.Column="2" Margin="0,12,0,0" Opacity="0.7" FontSize="12"
+                               Text="{DynamicResource Tools.SelfLink.GamePortHint}" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,12,20,0" Text="{DynamicResource Tools.SelfLink.Relays}" />
+                    <local:MyTextBox x:Name="TextRelays" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,12,0,0" />
+
+                    <WrapPanel Grid.Row="4" Grid.ColumnSpan="3" Margin="0,18,0,0">
+                        <local:MyButton x:Name="BtnHost" MinWidth="120" Margin="0,0,12,0"
+                                        Text="{DynamicResource Tools.SelfLink.Create}" Click="BtnHost_Click" />
+                        <local:MyButton x:Name="BtnJoin" MinWidth="120" Margin="0,0,12,0"
+                                        Text="{DynamicResource Tools.SelfLink.Join}" Click="BtnJoin_Click" />
+                        <local:MyButton x:Name="BtnStop" MinWidth="96" Text="{DynamicResource Tools.SelfLink.Stop}"
+                                        Click="BtnStop_Click" />
+                    </WrapPanel>
+
+                    <TextBlock x:Name="LabStatus" Grid.Row="5" Grid.ColumnSpan="3" Margin="0,16,0,0" TextWrapping="Wrap"
+                               Text="{DynamicResource Tools.SelfLink.Status.Idle}" />
+                </Grid>
+            </local:MyCard>
+
+            <local:MyCard Margin="0,0,0,15" Title="{DynamicResource Tools.SelfLink.Members}">
+                <StackPanel x:Name="PanPeers" Margin="21,40,21,18">
+                    <TextBlock x:Name="LabNoPeer" Text="{DynamicResource Tools.SelfLink.NoMembers}" Opacity="0.6" />
+                </StackPanel>
+            </local:MyCard>
+
+            <local:MyCard Margin="0,0,0,15" Title="{DynamicResource Tools.SelfLink.Guide}">
+                <StackPanel Margin="21,40,21,18">
+                    <TextBlock TextWrapping="Wrap" LineHeight="24" Text="{DynamicResource Tools.SelfLink.Guide.Text}" />
+                </StackPanel>
+            </local:MyCard>
+
+        </StackPanel>
+    </local:MyScrollViewer>
+</local:MyPageRight>
