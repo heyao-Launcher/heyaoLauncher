@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,9 +28,48 @@ public sealed class MicrosoftProvider : IAuthenticateProvider
 
     public MicrosoftProvider(string? clientId = null)
     {
-        _clientId = string.IsNullOrWhiteSpace(clientId) ? Secrets.MSOAuthClientId : clientId;
+        _clientId = string.IsNullOrWhiteSpace(clientId) ? ResolveClientId() : clientId;
         if (string.IsNullOrWhiteSpace(_clientId))
-            throw new InvalidOperationException("Microsoft OAuth client id is not configured.");
+            throw new InvalidOperationException(
+                "未配置 Microsoft OAuth 客户端 ID，无法使用微软登录。\n\n" +
+                "解决办法：在启动器同目录的 PCL 文件夹里新建 MicrosoftClientId.txt，" +
+                "把 Azure 应用的「应用程序(客户端) ID」填进去（或设置环境变量 PCL_MS_CLIENT_ID）。\n" +
+                "注册免费，步骤见仓库 README-FORK.md 的「微软登录」一节。\n" +
+                "暂时不想配置的话，可以在启动器里改用「离线登录」。");
+    }
+
+    /// <summary>
+    /// PCL 和姚修改版：允许在运行时提供 Microsoft OAuth 客户端 ID，
+    /// 优先使用编译期注入的密钥，其次环境变量，最后读取 PCL\MicrosoftClientId.txt。
+    /// </summary>
+    private static string ResolveClientId()
+    {
+        if (!string.IsNullOrWhiteSpace(Secrets.MSOAuthClientId))
+            return Secrets.MSOAuthClientId.Trim();
+
+        var fromEnv = Environment.GetEnvironmentVariable("PCL_MS_CLIENT_ID");
+        if (!string.IsNullOrWhiteSpace(fromEnv))
+            return fromEnv.Trim();
+
+        try
+        {
+            var candidates = new List<string> { Paths.Data, Path.Combine(AppContext.BaseDirectory, "PCL") };
+            foreach (var dir in candidates)
+            {
+                if (string.IsNullOrWhiteSpace(dir)) continue;
+                var file = Path.Combine(dir, "MicrosoftClientId.txt");
+                if (!File.Exists(file)) continue;
+                var text = File.ReadAllText(file).Trim();
+                if (string.IsNullOrWhiteSpace(text)) continue;
+                return text.Split('\n')[0].Trim();
+            }
+        }
+        catch
+        {
+            // 读取失败时按未配置处理
+        }
+
+        return "";
     }
 
     public async Task<DeviceCodeData> GetDeviceCodeAsync(CancellationToken token)

@@ -61,6 +61,21 @@
 这是上游自己的合规选择。本修改版在 `RestrictedFeaturePolicy` 里用 `DisableRegionRestriction = true` 关掉了它，
 **相关合规责任由使用者自行承担**；若要恢复，把该常量改成 `false` 重新编译即可。
 
+## 微软登录（需要自备 Azure 客户端 ID）
+
+上游在 CI 里通过密钥注入 Microsoft OAuth client id，本仓库没有这个密钥，所以默认用不了微软登录
+（会提示 `Microsoft OAuth client id is not configured`）。自己注册一个即可，免费、不需要订阅：
+
+1. 打开 <https://portal.azure.com> → **Microsoft Entra ID** → **应用注册** → **新注册**
+2. 名称随便填（例如 `PCL-Heyao`），受支持的帐户类型选 **「仅个人 Microsoft 帐户」**
+3. 注册完成后复制 **「应用程序(客户端) ID」**
+4. 左侧 **「身份验证」** → 拉到最下面 → **「允许公共客户端流」** 选 **「是」** → 保存
+   （设备码登录必须打开这一项，不需要配置重定向 URI）
+5. 在启动器同目录的 `PCL` 文件夹里新建 `MicrosoftClientId.txt`，把客户端 ID 粘进去（一行，别带空格）
+
+读取顺序：编译期注入的密钥 → 环境变量 `PCL_MS_CLIENT_ID` → `PCL\MicrosoftClientId.txt`。
+改完重启启动器，重新登录微软账号即可。不想配置的话，用「离线登录」也能正常玩单机。
+
 ## 如何自己构建
 
 ```powershell
